@@ -1,0 +1,109 @@
+# In-Class Assessment 1
+
+Author: daiyuchen 
+Date: 23/9/2025
+
+---
+
+## (a) Describe the three main cloud service models: IaaS, PaaS, and SaaS, and provide examples of how each is applied in a software development environment.
+
+**IaaS (Infrastructure as a Service)**  
+Definition: IaaS provides on-demand access to computing infrastructure such as virtual machines, storage, and networking. The cloud provider manages the physical infrastructure, while the user manages the operating system and applications.  
+Example in software development: A development team rents virtual machines on AWS EC2 or Google Compute Engine to build a staging/test environment that mirrors production. This allows developers to configure the operating system and install required software stacks.
+
+---
+
+**PaaS (Platform as a Service)**  
+Definition: PaaS offers a platform that includes runtime environments, frameworks, and middleware, allowing developers to focus on coding without worrying about infrastructure management.  
+Example in software development: Using Heroku or Google App Engine, developers can push their source code, and the platform automatically handles build, deployment, scaling, and monitoring. This accelerates prototyping and simplifies the deployment process.
+
+---
+
+**SaaS (Software as a Service)**  
+Definition: SaaS delivers fully functional software applications over the internet. Users can access the application via browsers or APIs without handling installation or maintenance.  
+Example in software development: Teams use SaaS tools such as GitHub for source control, Jira for issue tracking, and Slack for communication. These tools improve collaboration and reduce operational overhead.
+
+---
+
+## (b) What is Docker? Describe a scenario in software development where containerization (like Docker) is used. How does containerization contribute to the software development and deployment process?
+
+**What is Docker?**  
+Docker is a platform that packages applications and their dependencies into containers. Containers are lightweight, portable, and consistent across environments. This eliminates the common problem of "it works on my machine" by ensuring uniform behavior everywhere.
+
+**Scenario:**  
+A project consists of multiple microservices, each requiring different runtimes (e.g., Node.js, Python, Java). Developers use Docker Compose to run all services locally, with each microservice isolated in its own container. The same images are reused in CI pipelines and production.
+
+**Contributions of containerization:**  
+1. **Portability** – The same image works across development, testing, and production environments.  
+2. **Isolation** – Each service runs in its own container, avoiding dependency conflicts.  
+3. **Scalability & efficiency** – Containers are lightweight and start quickly, improving resource utilization.  
+4. **CI/CD integration** – Images become reproducible build artifacts, simplifying deployment, rollback, and scaling.
+
+---
+
+## (c) 用 Docker 部署 n8n，并截屏 `http://127.0.0.1:5678`，详细解释 docker 命令
+
+### Step 1: install Docker
+- **Windows**：install [Docker Desktop](https://www.docker.com/products/docker-desktop/)，need use WSL2。  
+- **MacOS**：`brew install --cask docker`，然后启动 Docker Desktop。  
+- **Linux (Ubuntu )**：
+  ```bash
+  sudo apt update
+  sudo apt install docker.io -y
+  sudo systemctl enable --now docker
+
+Verify whether the installation was successful
+```bash
+docker --version
+` ` `
+
+---
+
+Step 2: Create the data volume
+```bash
+docker volume create n8n_data
+` ` `
+This command creates a persistent volume to prevent data loss after the container is deleted.
+
+---
+
+Step 3: Run the n8n container
+```bash
+docker run -d `
+--name n8n `
+-p 5678:5678 `
+-v n8n_data:/home/node/.n8n `
+-e N8N_BASIC_AUTH_ACTIVE=true `
+-e N8N_BASIC_AUTH_USER=admin `
+-e N8N_BASIC_AUTH_PASSWORD=StrongPasswordHere `
+-e N8N_HOST=0.0.0.0 '
+docker.n8n.io/n8nio/n8n:latest
+` ` `
+
+Explanation
+- '-d' : Runs in the background
+- '--name n8n' : Container name
+- '-p 5678:5678' : Mapping port
+- '-v n8n_data:/home/node/.n8n' : Mount the data volume
+- `-e ... Set the authentication and host parameters
+- ` docker. N8n. IO/n8nio/n8n: latest ` : image name
+
+---
+
+Step 4: Check the running status of the container
+```bash
+docker ps
+` ` `
+Confirm that there is' n8n 'in the output and that port' 5678 'has been mapped.
+
+---
+
+Step 5: Open the Web interface
+1. Open a browser to access [http://127.0.0.1:5678] (http://127.0.0.1:5678).
+2. Enter the set username and password (for example, 'admin/StrongPasswordHere').
+3. Confirm that you can enter the n8n interface.
+
+---
+
+Step 6: Take a screenshot and save it
+Take screenshots of the browser interface (including the address bar) and save them to the 'screenshots/' folder in the repository
